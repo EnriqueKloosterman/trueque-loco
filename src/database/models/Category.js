@@ -25,5 +25,5 @@ module.exports = (sequielize, DataTypes) => {
             foreignKey: "id_product"
         });
     };
-
+    return Category;
 };

@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const alias = "PrtoductImage";
+    const alias = "ProductImage";
     const cols ={
         image_id: {
             type: DataTypes.STRING,

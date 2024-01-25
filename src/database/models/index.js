@@ -26,9 +26,18 @@ fs
       file.indexOf('.test.js') === -1
     );
   })
+  // .forEach(file => {
+  //   const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+  //   db[model.name] = model;
+  // });
   .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
+    try {
+      const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+      db[model.name] = model;
+      console.log(`Model "${model.name}" loaded successfully.`);
+    } catch (error) {
+      console.error(`Error loading model from file "${file}":`, error);
+    }
   });
 
 Object.keys(db).forEach(modelName => {

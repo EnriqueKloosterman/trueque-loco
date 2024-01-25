@@ -31,11 +31,22 @@ module.exports = (sequelize, DataTypes) => {
         user_avatar: {
             type: DataTypes.STRING,
             allowNull: false,
+        }, 
+        createdAt: {
+            type: DataTypes.DATE, // Agrega este campo para manejar createdAt
+            allowNull: false,
+            defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+        },
+        updatedAt: {
+            type: DataTypes.DATE, // Agrega este campo para manejar updatedAt
+            allowNull: false,
+            defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
         }
     };
 
     const config = { 
-        tableName: "users",
+        tableName: "users", 
+        timestamps: true, 
     };
     
     const Users = sequelize.define(alias, cols, config);
