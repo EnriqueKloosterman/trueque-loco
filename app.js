@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require( "cookie-parser");;
 const authRouter = require( "./src/routes/auth.routes.js");
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,7 +15,8 @@ app.use(cookieParser());
 
 app.use('/api/v1/auth', authRouter )
 
-// app.use(express.static("public"));
+const publicPath = path.resolve(__dirname, '../public');
+app.use('publicPath', express.static(publicPath));
 
 
 app.use((req, res, next) => {
