@@ -1,35 +1,97 @@
-const express = require('express');
-const database = require('../database/models');
-const { v4: uuidv4 } = require('uuid');
-const bcrypt = require('bcryptjs');
+const database = require("../database/models");
+const { v4: uuidv4 } = require("uuid");
+const bcrypt = require("bcryptjs");
+const { validationResult } = require("express-validator");
 
 const userController = {
+  register: async (req, res) => {
+    const { user_name, user_email, user_password, user_address, user_phone } =
+      req.body;
+    console.log(req.body);
+    const user = await database.Users.findOne({
+      where: { user_email: user_email },
+    });
+    if (user) {
+      return res
+        .status(400)
+        .json({ message: "El mail ya se encuentra registrado" });
+    }
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        // Si hay errores de validación, devuelve una respuesta de error
+        return res.status(400).json({ errors: errors.array() });
+      };
+      await database.Users.create({
+        user_id: uuidv4(),
+        user_name: user_name,
+        user_email: user_email,
+        user_password: bcrypt.hashSync(user_password, 10),
+        user_address: user_address,
+        user_phone: user_phone,
+        user_avatar: req.file ? req.file.filename : "",
+      });
 
-   register: async (req, res) => {
-       const { user_name, user_email, user_password, user_address, user_phone, user_avatar } = req.body;
-       console.log(req.body);
-       const user = await database.Users.findOne({ where: { user_email: user_email } });
-       if (user) {
-           return res.status(400).json({ message: 'El mail ya se encuentra registrado' });
-       }
-       try {
-            await database.Users.create({
-                user_id: uuidv4(),
-                user_name: user_name,
-                user_email: user_email,
-                user_password: bcrypt.hashSync(user_password, 10),
-                user_address: user_address,
-                user_phone: user_phone,
-                user_avatar: req.file ? req.file.filename: ''
-            })
+      return res.status(201).json({ message: "User created" });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "Server Error" });
+    }
+  },
 
-            return res.status(201).json({ message: 'User created' });
-       } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Server Error' });
-       }
-   }
-}
+  getUser: async (req, res) => {
+    try {
+      const userId = req.params.id;
 
+      const user = await database.Users.findOne({
+        where: { user_id: userId },
+        attributes: [
+          "user_name",
+          "user_email",
+          "user_address",
+          "user_phone",
+          "user_avatar",
+        ],
+      });
 
-module.exports = userController
+      console.log("User:", user);
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      return res.status(200).json(user);
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+  updateUser: async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const { user_name, user_email, user_address, user_phone } = req.body;
+
+      const user = await database.Users.findOne({
+        where: { user_id: userId },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      await user.update({
+        user_name: user_name,
+        user_email: user_email,
+        user_address: user_address,
+        user_phone: user_phone,
+      });
+
+      return res.status(200).json({ message: "User updated" });
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+};
+
+module.exports = userController;
