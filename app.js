@@ -1,9 +1,9 @@
 const express = require("express");
-const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require( "cookie-parser");;
 const authRouter = require( "./src/routes/auth.routes.js");
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;

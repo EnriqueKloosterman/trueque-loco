@@ -12,8 +12,8 @@ const validationsResults = {
             .normalizeEmail(),
         body('user_password', 'password is required')
             .trim()
-            .notEmpty()
-            .isLength({ min: 8, max: 20 }),
+            .notEmpty(),
+            // .isLength({ min: 8, max: 20 }),
         body('user_address', 'address is required')
             .notEmpty()
             .isString(),

@@ -4,9 +4,9 @@ module.exports = (sequelize, DataTypes) => {
     const alias = "Users";
     const cols = {
         user_id: {
-            // type: DataTypes.STRING,
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
+            type: DataTypes.STRING,
+            // type: DataTypes.UUID,
+            // defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
             allowNull: false,
             unique: true
