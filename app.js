@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require( "cookie-parser");;
 const authRouter = require( "./src/routes/auth.routes.js");
+const productsRouter = require( "./src/routes/products.routes.js");
 const path = require('path');
 require('dotenv').config();
 
@@ -13,7 +14,8 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api/v1/auth', authRouter )
+app.use('/api/v1/auth', authRouter );
+app.use('/api/v1/products', productsRouter );
 
 const publicPath = path.resolve(__dirname, '../public');
 app.use('publicPath', express.static(publicPath));

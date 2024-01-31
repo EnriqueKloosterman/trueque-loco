@@ -2,7 +2,7 @@ const database = require("../database/models");
 const { v4: uuidv4 } = require("uuid");
 const bcryptjs = require("bcryptjs");
 const { validationResult } = require("express-validator");
-const { generateToken } = require("../utils/tokenManager.js");
+const generateToken = require("../utils/tokenManager.js");
 
 const userController = {
   register: async (req, res) => {
@@ -33,6 +33,7 @@ const userController = {
 
       return res.status(201).json({ message: "User created" });
     } catch (error) {
+      console.log(error)
       return res.status(500).json({ message: "Server Error" });
     }
   },
@@ -40,7 +41,7 @@ const userController = {
   login: async (req, res) => {
     try {
       const  { user_email, user_password } = req.body;
-      const user = await database.Users.findOne({
+      let user = await database.Users.findOne({
         where: { user_email: user_email }
       });
       if(!user){
@@ -50,12 +51,13 @@ const userController = {
       if(!passwordToMatch){
         return res.status(401).json({message: "Invalid password"});
       };
-      const { token, exipresIn} = generateToken(user.user_id);
+      const { token, expiresIn} = generateToken(user.user_id);
       res.cookie("token", token, {
         httpOnly: true,
+        // secure: !(process.env.MODO === "developer"),
       })
    
-      res.status(200).json({ token, exipresIn, message: "login ok"})
+      res.status(200).json({ token, expiresIn, message: "login ok"})
     } catch (error) {
       return res.status(500).json( {error: "Server Error"} )
     }

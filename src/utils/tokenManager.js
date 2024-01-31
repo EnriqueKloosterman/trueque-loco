@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 
-const generateToken = (user_id) => {
-    const expiresIn = 60 * 60 * 24;
-
+const generateToken = (uid) => {
+    const expiresIn = '1d';
+    const secret = process.env.JWT_SECRET;
     try {
-        const token = jwt.sign({user_id}, process.env.JWT_SECRET, {expiresIn});
+        const token = jwt.sign({uid},secret, {expiresIn});
         return {token, expiresIn}
     } catch (error) {
         return res.status(500).json({ message: 'Error generating token'});
@@ -12,4 +12,4 @@ const generateToken = (user_id) => {
     }
 }
 
-module.exports = {generateToken};
+module.exports = generateToken;

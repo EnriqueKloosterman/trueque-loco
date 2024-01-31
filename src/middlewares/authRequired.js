@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const requireToken = (req, res, next) => {
+    const secret =  process.env.JWT_SECRET;
     try {
         let token = req.cookies.token;
         if(!token) {
@@ -8,8 +9,8 @@ const requireToken = (req, res, next) => {
                 message: "Unauthorized"
             });
         }
-        const {user_id} = jwt.verify(token, process.env.JWT_SECRET);
-        req.user_id = user_id;
+        const {uid} = jwt.verify(token, secret);
+        req.user_id = uid;
         next();
     } catch (error) {
         const TokenVerificationErrors ={
